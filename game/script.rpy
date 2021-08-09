@@ -120,9 +120,9 @@ label skip_demo:
     $ chest = Inventory("Storage Chest")    
     
     show screen overlay    
-    show screen inventory_screen(jane_inv, mindy_inv)      
-   
-    jump looping 
+    show screen inventory_screen(jane_inv, mindy_inv)
+
+    jump looping
     
 screen overlay:
     frame:
