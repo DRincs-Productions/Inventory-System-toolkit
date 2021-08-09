@@ -16,7 +16,7 @@ label start:
     #$ quarter = Item("Quarter", "A new quarter)
     
     ### Items with icons are created like this:
-    $ eye = Item(name="Eyeball", desc="A human eyeball, how creepy!", icon="images/eye.png", value=250)
+    $ eye = Item(name="Eyeball", description="A human eyeball, how creepy!", icon="images/eye.png", value=250)
 
     # Items that can be used in crafting
     $ but = Item("Button", "A shiny button", "images/button.png", 100, act=Show("inventory_popup", message="This item is only used in crafting"))

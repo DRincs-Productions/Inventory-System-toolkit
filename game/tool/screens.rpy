@@ -33,9 +33,9 @@ screen tooltip(item=False,seller=false):
         hbox:
             xalign 0.5 yalign 0.9
             if seller:
-                text ("[item[0].name]: [item[0].desc] (Sell Value: " + str(calculate_price(item, seller)) + ")")
+                text ("[item[0].name]: [item[0].description] (Sell Value: " + str(calculate_price(item, seller)) + ")")
             else:
-                text "[item[0].name]: [item[0].desc]"# (Value: [item[0].value])"
+                text "[item[0].name]: [item[0].description]"# (Value: [item[0].value])"
 
 screen inventory_screen(first_inventory, second_inventory=False, trade_mode=False, bank_mode=False):
     add 'interface phon2'
@@ -95,7 +95,7 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
                 spacing 25
             for item in inventory.inv:
                 $ name = item[0].name
-                $ desc = item[0].desc
+                $ description = item[0].description
                 $ value = item[0].value
                 $ qty = str(item[1])
                 hbox:
