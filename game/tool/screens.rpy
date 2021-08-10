@@ -27,18 +27,21 @@ style invstyle_label_text:
 style invstyle_label:
     xalign 0.5
 
-
-screen tooltip(item=False,seller=false):
+screen tooltip(item = False, seller = False):
     if item:
         hbox:
             xalign 0.5 yalign 0.9
+            $ val_name = inventory_items[item].name
+            $ val_description = inventory_items[item].description
             if seller:
-                text ("[item[0].name]: [item[0].description] (Sell Value: " + str(calculate_price(item, seller)) + ")")
+                text ("[val_name]: [val_description] (Sell Value: " + str(calculate_price(item, seller)) + ")")
             else:
-                text "[item[0].name]: [item[0].description]"# (Value: [item[0].value])"
+                text "[val_name]: [val_description]"
+            $ del val_name
+            $ del val_description
 
 screen inventory_screen(first_inventory, second_inventory=False, trade_mode=False, bank_mode=False):
-    add 'interface phon2'
+    # add '/gui/overlay/game_menu.png'
     style_prefix 'inventory'
     tag menu
     frame:
@@ -94,18 +97,18 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
                 cols 1
                 spacing 25
             for item in inventory.inv:
-                $ name = item[0].name
-                $ description = item[0].description
-                $ value = item[0].value
-                $ qty = str(item[1])
+                $ name = inventory_items[item].name
+                $ description = inventory_items[item].description
+                $ value = inventory_items[item].value
+                $ qty = str(inventory.inv[item])
                 hbox:
-                    if item[0].icon:
-                        $ icon = item[0].icon
+                    if inventory_items[item].icon:
+                        $ icon = inventory_items[item].icon
                         $ hover_icon = im.Sepia(icon)
                         imagebutton:
                             idle LiveComposite((100,100), (0,0), icon, (0,0), Text(qty))
                             hover LiveComposite((100,100), (0,0), hover_icon, (0,0), Text(qty))
-                            action (If(not second_inventory, item[0].act, (If(trade_mode, Function(trade,inventory, second_inventory, item), Function(transaction,inventory, second_inventory, item)))))
+                            action (If(not second_inventory, inventory_items[item].act, (If(trade_mode, Function(trade, inventory, second_inventory, item), Function(transaction, inventory, second_inventory, item)))))
                             hovered Show("tooltip", item = item, seller = second_inventory)
                             unhovered Hide("tooltip")
                             at things
@@ -118,7 +121,7 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
                                         text ("Sell Value: " + str(calculate_price(item, second_inventory)))
                     else:                               
                         textbutton "[name] ([qty])":
-                            action (If(not second_inventory, item[0].act,(If(trade_mode, Function(trade, inventory, second_inventory, item), Function(transaction,inventory, second_inventory, item)))))
+                            action (If(not second_inventory, inventory_items[item].act,(If(trade_mode, Function(trade, inventory, second_inventory, item), Function(transaction, inventory, second_inventory, item)))))
                             hovered Show("tooltip", item=item, seller=second_inventory)
                             unhovered Hide("tooltip")
                         if not inventory.grid_view:
@@ -129,7 +132,7 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
 
             ## maintains spacing in empty inventories.
             if len(inventory.inv) == 0:
-                add Null(height=100,width=100)
+                add Null(height = 100, width = 100)
 
         vbar value YScrollValue("vp"+inventory.name)
 
@@ -140,6 +143,7 @@ screen money(inventory, second_inventory, bank_mode=False):
         if bank_mode and inventory.money:
             textbutton "Transfer" action Show("banking", depositor=inventory, withdrawer=second_inventory)
 
+define transfer_amount = 0
 screen banking(depositor, withdrawer):
     modal True
     frame:
@@ -149,7 +153,8 @@ screen banking(depositor, withdrawer):
             text "Amount: [transfer_amount]"
             bar value VariableValue("transfer_amount", depositor.money, max_is_zero=False, style='scrollbar', offset=0, step=0.1) xmaximum 200
 
-            hbox: #examples of the types of controls you can set up
+            # Examples of the types of controls you can set up
+            hbox: 
                 for amount in [50,100,250,depositor.money]:
                     if depositor.money>=amount:
                         textbutton str(amount) action SetVariable("transfer_amount", amount)

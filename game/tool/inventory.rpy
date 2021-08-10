@@ -8,7 +8,9 @@ init python:
             description,
             icon,
             value = None,
-            act = Show("inventory_popup", message="Nothing happened!"), type="item", recipe=False):
+            act = Show("inventory_popup", message="Nothing happened!"),
+            type="item",
+            recipe = None):
 
             global cookbook
             self.name = name
@@ -45,94 +47,109 @@ init python:
         def __init__(self,
             name,
             money = 0,
-            barter = 100):
+            barter = 100,
+            inv = {}):
 
             self.name = name
             self.money = money
             # percentage of value paid for items
             self.barter = barter
             # items stored in nested list [item object, qty]
-            self.inv = [] 
+            self.inv = {}
+            self.inv.update(inv)
+
             self.sort_by = self.sort_name
             # ascending, descriptionending
             self.sort_order = True
             self.grid_view = True
 
+        def set(self, text, value):
+            """Function to set or add a new value"""
+            if (text != None and text != ""):
+                self.inv[text] = value
+            else:
+                self.remove(text)
+        def remove(self, text):
+            """Delete the text value"""
+            del self.inv[text]
+        def change(self, text, amt, max=100, min=0):
+            """Changes a value, if it does not exist adds it"""
+            if (self.get(text) != None):
+                self.inv[text] += amt
+                if (self.get(text) == 0):
+                    self.remove(text)
+            else:
+                self.set(text, amt)
+        def get(self, text):
+            """Returns the value "text", in case it does not exist returns None"""
+            if text in self.inv:
+                return self.inv[text]
+            else:
+                return None
+
+        def take(self, item, qty=1):
+            """++++++"""
+            self.change(item, qty)
+        def drop(self, item, qty=1):
+            """------"""
+            self.change(item, -qty)
+        def qty(self, item):
+            """Returns quantity"""
+            return self.get(item)
+
+        def deposit(self, amount):
+            self.money -= amount
+        def withdraw(self, amount):
+            self.money += amount
+
+        def sell(self, item, price):
+            self.withdraw(price)
+            self.drop(item)
         def buy(self, item, price):
             self.deposit(price)
-            self.take(item[0])
-
-        def check(self, item):
-            """Returns item index (location)"""
-            if self.qty(item):
-                for i in self.inv:
-                    if i[0] == item:
-                        return self.inv.index(i)
+            self.take(item)
 
         def check_recipe(self, item):
             """Verify all ingredients are in inv"""
             checklist = list()
-            for i in item.recipe:
+            for i in inventory_items[item].recipe:
+                # TODO: da rivedere
                 if self.qty(i[0]) >= i[1]:
                     checklist.append(True)
-            if len(checklist) == len(item.recipe):
+            if len(checklist) == len(inventory_items[item].recipe):
                 return True
             else:
                 return False
-   
+
         def craft(self, item):
-            for line in item.recipe:
+            for line in inventory_items[item].recipe:
+                # TODO: da rivedere
                 self.drop(line[0], line[1])
             self.take(item)  
-            message = _("Crafted a %s!") % (item.name)
+            message = _("Crafted a %s!") % (item)
             renpy.show_screen("inventory_popup", message=message)
 
-        def deposit(self, amount):
-            self.money -= amount   
-
-        def drop(self, item, qty=1):
-            if self.qty(item):
-                item_location = self.check(item)
-                if self.inv[item_location][1] > qty:
-                    self.inv[item_location][1] -= qty
-                else:
-                    del self.inv[item_location]
-
-        def qty(self, item):
-            """Returns quantity"""
-            for i in self.inv:
-                if i[0] == item:
-                    return i[1]
-
-        def sell(self, item, price):
-            self.withdraw(price)
-            self.drop(item[0])
-
         def sort_name(self):
-            self.inv.sort(key=lambda i: i[0].name, reverse=self.sort_order)
+            new_inv = sorted(self.inv.items(), key=lambda x: x[0], reverse=self.sort_order)
+            self.inv.update(new_inv)
+            del new_inv
 
         def sort_qty(self):
-            self.inv.sort(key=lambda i: i[1], reverse=self.sort_order)
+            new_inv = sorted(self.inv.items(), key=lambda x: x[1], reverse=self.sort_order)
+            self.inv.update(new_inv)
+            del new_inv
 
         def sort_value(self):
-            self.inv.sort(key=lambda i: i[0].value, reverse=self.sort_order)
+            new_inv = sorted(self.inv.items(), key=lambda x: inventory_items[x[0]].value, reverse=self.sort_order)
+            self.inv.update(new_inv)
+            del new_inv
 
-        def take(self, item, qty=1):
-            if self.qty(item):
-                item_location = self.check(item)
-                self.inv[item_location][1] += qty
-            else:
-                self.inv.append([item,qty])
-
-        def withdraw(self, amount):
-            self.money += amount
-            
     def calculate_price(item, buyer):
         """Calculate price"""
         if buyer:
-            price = item[0].value * (buyer.barter * 0.01)
+            price = inventory_items[item].value * (buyer.barter * 0.01)
             return int(price)
-        
+
     def money_transfer(depositor, withdrawer, amount):
         """Money transfer"""
         if depositor.money >= amount:
@@ -144,9 +161,9 @@ init python:
 
     def trade(seller, buyer, item):
         """Trade"""
-        seller.drop(item[0])
-        buyer.take(item[0])
-        
+        seller.drop(item)
+        buyer.take(item)
+
     def transaction(seller, buyer, item):
         """Transaction"""
         price = calculate_price(item, buyer)
@@ -156,5 +173,3 @@ init python:
         else:
             message = _("Sorry, %s doesn't have enough money!") % (buyer.name)
             renpy.show_screen("inventory_popup", message = message)
-
-    transfer_amount = 0
