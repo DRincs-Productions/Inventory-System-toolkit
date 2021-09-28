@@ -58,7 +58,8 @@ init python:
             self.inv = {}
             self.inv.update(inv)
 
-            self.sort_by = self.sort_name
+            # TODO 453:
+            # self.sort_by = self.sort_name
             # ascending, descriptionending
             self.sort_order = True
             self.grid_view = True
@@ -129,20 +130,16 @@ init python:
             message = _("Crafted a %s!") % (item)
             renpy.show_screen("inventory_popup", message=message)
 
-        def sort_name(self):
-            new_inv = sorted(self.inv.items(), key=lambda x: x[0], reverse=self.sort_order)
-            self.inv.update(new_inv)
-            del new_inv
-
-        def sort_qty(self):
-            new_inv = sorted(self.inv.items(), key=lambda x: x[1], reverse=self.sort_order)
-            self.inv.update(new_inv)
-            del new_inv
-
-        def sort_value(self):
-            new_inv = sorted(self.inv.items(), key=lambda x: inventory_items[x[0]].value, reverse=self.sort_order)
-            self.inv.update(new_inv)
-            del new_inv
+        # TODO 453: il sort non è implementato, perchè non sò come farlo. sort rilascia una lista e non un dizionario, ogni valore ha ("coin", 4).
+        # ho commentati anche nello screens
+        # def sort_name(self):
+        #     # keys
+        #     self.inv = sorted(self.inv.items(), key=lambda x: x[0], reverse=self.sort_order)
+        # def sort_qty(self):
+        #     # values
+        #     self.inv = sorted(self.inv.items(), key=lambda x: x[1], reverse=self.sort_order)
+        # def sort_value(self):
+        #     self.inv = sorted(self.inv.items(), key=lambda x: inventory_items[x[0]].value, reverse=self.sort_order)
 
     def calculate_price(item, buyer):
         """Calculate price"""

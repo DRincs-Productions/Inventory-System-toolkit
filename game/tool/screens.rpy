@@ -72,14 +72,16 @@ screen inventory_screen(first_inventory, second_inventory=False, trade_mode=Fals
                     use money(first_inventory, second_inventory, bank_mode)
                 use inventory_view(first_inventory, second_inventory, trade_mode)
                 use view_nav(first_inventory)
-                use sort_nav(first_inventory)
+                # TODO 453:
+                # use sort_nav(first_inventory)
             if second_inventory:
                 vbox:
                     label second_inventory.name
                     use money(second_inventory, first_inventory, bank_mode)
                     use inventory_view(second_inventory, first_inventory, trade_mode)
                     use view_nav(second_inventory)
-                    use sort_nav(second_inventory)
+                    # TODO 453:
+                    # use sort_nav(second_inventory)
 
 screen inventory_view(inventory, second_inventory=False, trade_mode=False):
     side "c r":
