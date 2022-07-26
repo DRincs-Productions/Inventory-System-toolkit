@@ -1,8 +1,13 @@
-﻿## inventory 1.5 demo
-      
- 
-      
-label start:  
+﻿# The script of the game goes in this file.
+
+# Declare characters used by this game. The color argument colorizes the
+# name of the character.
+
+
+
+# The game starts here.
+
+label start:
     ## If using the crafting feature, add an empty cookbook list after start to keep track of recipes
     $ cookbook = list() 
    
