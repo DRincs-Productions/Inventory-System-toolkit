@@ -85,7 +85,7 @@ screen inventory_screen(first_inventory, second_inventory=False, trade_mode=Fals
 
 screen inventory_view(inventory, second_inventory=False, trade_mode=False):
     $ column_number = 6
-    # Necessario altrimenti causa: Grid not completely full. (in renpy the grid not is smart)
+    # Necessary otherwise cause: Grid not completely full. (in renpy the grid not is smart)
     $ max_item_number = getItemNumberInInventory(inventory)
     $ grid_column_number = max_item_number
     if (max_item_number % column_number > 0):
