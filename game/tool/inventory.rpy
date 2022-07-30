@@ -170,3 +170,10 @@ init python:
         else:
             message = _("Sorry, %s doesn't have enough money!") % (buyer.name)
             renpy.show_screen("inventory_popup", message = message)
+
+    def getItemNumberInInventory(inventory1, inventory2) -> int:
+        return getItemNumberInInventory(inventory1 | inventory2)
+
+    def getItemNumberInInventory(inventory) -> int:
+        """Returns the number of items in the inventory"""
+        return len(inventory.inv)
