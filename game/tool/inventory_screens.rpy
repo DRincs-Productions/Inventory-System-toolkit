@@ -84,6 +84,7 @@ screen inventory_screen(first_inventory, second_inventory=False, trade_mode=Fals
                     # use sort_nav(second_inventory)
 
 screen inventory_view(inventory, second_inventory=False, trade_mode=False):
+    $ cols_number = 6
     side "c r":
         style_group "invstyle"
         area (0, 0, 700, 500)
@@ -93,7 +94,7 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
             xsize 700
             ysize 500
             if inventory.grid_view:
-                cols 6
+                cols cols_number
                 spacing 10
             else:
                 cols 1
@@ -131,7 +132,8 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
                                 text "List Value: [value]"
                                 if not trade_mode and second_inventory:
                                     text "Sell Value: " + str(calculate_price(item, second_inventory)) + ")"
-
+            for item in range(len(inventory.inv) % cols_number): # altrimenti vpgrid non funziona
+                hbox
             ## maintains spacing in empty inventories.
             if len(inventory.inv) == 0:
                 add Null(height = 100, width = 100)
