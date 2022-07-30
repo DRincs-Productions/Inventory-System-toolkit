@@ -3,6 +3,9 @@
 # Declare characters used by this game. The color argument colorizes the
 # name of the character.
 
+######### DEFINE INVENTORIES ##########    
+define mc_inventory_name = __("MC Inventory")
+default mc_inventory = Inventory(mc_inventory_name)
 
 
 # The game starts here.
@@ -10,9 +13,6 @@
 label start:
     ## If using the crafting feature, add an empty cookbook list after start to keep track of recipes
     $ cookbook = list() 
-   
-    ######### DEFINE INVENTORIES ##########    
-    $ mc_inventory = Inventory("Jane")
       
     menu:
         "Feature demo":
