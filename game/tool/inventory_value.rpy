@@ -20,7 +20,7 @@ define inventory_items = {
 }
 
 ######### DEFINE INVENTORIES ##########    
-define mc_inventory_name = __("MC Inventory")
+define mc_inventory_name = __("MC")
 default mc_inventory = Inventory(name="[mc_inventory_name]", money=500, barter=100,
     inv = {
         "coin":     4,

@@ -109,7 +109,7 @@ init python:
             withdrawer.withdraw(amount) 
         else:
             message = _("Sorry, %s doesn't have %d!") % (buyer.name, amount)
-            # TODO: notify
+            renpy.show_screen("popup", message=message) 
 
     def trade(seller, buyer, item):
         """Trade"""
@@ -124,7 +124,7 @@ init python:
             buyer.buy(item, price)
         else:
             message = _("Sorry, %s doesn't have enough money!") % (buyer.name)
-            # TODO: notify
+            renpy.show_screen("popup", message = message)
 
     def getItemNumberInInventory(inventory1, inventory2) -> int:
         return getItemNumberInInventory(inventory1 | inventory2)
