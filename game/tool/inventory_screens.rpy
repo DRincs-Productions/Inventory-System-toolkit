@@ -140,7 +140,7 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
                                     if not trade_mode and second_inventory:
                                         text "Sell Value: " + str(inventory.calculatePrice(item)) + ")"
             ## maintains spacing in empty inventories.
-            if len(inventory.getValues()) == 0:
+            if getItemNumberInInventory(inventory) == 0:
                 add Null(height = 100, width = 100)
 
         vbar value YScrollValue("vp"+inventory.name)
