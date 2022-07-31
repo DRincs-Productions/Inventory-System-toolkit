@@ -1,3 +1,5 @@
+define INVENTORY_COLUMN_NUMBER = 6
+
 init:
     transform close_zoom:
         size ((105, 35) if renpy.variant("small") else (75, 25))
@@ -84,6 +86,12 @@ screen inventory_screen(first_inventory, second_inventory=False, trade_mode=Fals
                     # use sort_nav(second_inventory)
 
 screen inventory_view(inventory, second_inventory=False, trade_mode=False):
+    # Necessary otherwise cause: Grid not completely full. (in renpy the grid not is smart)
+    $ max_item_number = getItemNumberInInventory(inventory)
+    $ grid_column_number = max_item_number
+    if (max_item_number % INVENTORY_COLUMN_NUMBER > 0):
+        $ grid_column_number = max_item_number + (INVENTORY_COLUMN_NUMBER - (max_item_number % INVENTORY_COLUMN_NUMBER))
+    $ list_item_key = list(inventory.inv.keys())
     side "c r":
         style_group "invstyle"
         area (0, 0, 700, 500)
@@ -92,46 +100,49 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
             mousewheel True
             xsize 700
             ysize 500
-            if inventory.grid_view:
-                cols 6
+            if (grid_column_number == 0):
+                cols 1
+            elif inventory.grid_view:
+                cols INVENTORY_COLUMN_NUMBER
                 spacing 10
             else:
                 cols 1
                 spacing 25
-            for item in inventory.inv:
-                $ name = inventory_items[item].name
-                $ description = inventory_items[item].description
-                $ value = inventory_items[item].value
-                $ qty = str(inventory.inv[item])
+            for index in range(grid_column_number):
                 hbox:
-                    if inventory_items[item].icon:
-                        $ icon = inventory_items[item].icon
-                        $ hover_icon = im.Sepia(icon)
-                        imagebutton:
-                            idle LiveComposite((100,100), (0,0), icon, (0,0), Text(qty))
-                            hover LiveComposite((100,100), (0,0), hover_icon, (0,0), Text(qty))
-                            action (If(not second_inventory, inventory_items[item].act, (If(trade_mode, Function(trade, inventory, second_inventory, item), Function(transaction, inventory, second_inventory, item)))))
-                            hovered Show("tooltip", item = item, seller = second_inventory)
-                            unhovered Hide("tooltip")
-                            at things
-                        if not inventory.grid_view:
-                            vbox:
-                                text name
-                                if not trade_mode:
-                                    # text "List Value: [value]"
-                                    if second_inventory:
-                                        text ("Sell Value: " + str(calculate_price(item, second_inventory)))
-                    else:                               
-                        textbutton "[name] ([qty])":
-                            action (If(not second_inventory, inventory_items[item].act,(If(trade_mode, Function(trade, inventory, second_inventory, item), Function(transaction, inventory, second_inventory, item)))))
-                            hovered Show("tooltip", item=item, seller=second_inventory)
-                            unhovered Hide("tooltip")
-                        if not inventory.grid_view:
-                            vbox:                        
-                                text "List Value: [value]"
-                                if not trade_mode and second_inventory:
-                                    text "Sell Value: " + str(calculate_price(item, second_inventory)) + ")"
-
+                    if (len(list_item_key) > index):
+                        $ item = list_item_key[index-1]
+                        $ name = inventory_items[item].name
+                        $ description = inventory_items[item].description
+                        $ value = inventory_items[item].value
+                        $ qty = str(inventory.inv[item])
+                        if inventory_items[item].icon:
+                            $ icon = inventory_items[item].icon
+                            $ hover_icon = im.Sepia(icon)
+                            imagebutton:
+                                idle LiveComposite((100,100), (0,0), icon, (0,0), Text(qty))
+                                hover LiveComposite((100,100), (0,0), hover_icon, (0,0), Text(qty))
+                                action (If(not second_inventory, inventory_items[item].act, (If(trade_mode, Function(trade, inventory, second_inventory, item), Function(transaction, inventory, second_inventory, item)))))
+                                hovered Show("tooltip", item = item, seller = second_inventory)
+                                unhovered Hide("tooltip")
+                                at things
+                            if not inventory.grid_view:
+                                vbox:
+                                    text name
+                                    if not trade_mode:
+                                        # text "List Value: [value]"
+                                        if second_inventory:
+                                            text ("Sell Value: " + str(calculate_price(item, second_inventory)))
+                        else:                               
+                            textbutton "[name] ([qty])":
+                                action (If(not second_inventory, inventory_items[item].act,(If(trade_mode, Function(trade, inventory, second_inventory, item), Function(transaction, inventory, second_inventory, item)))))
+                                hovered Show("tooltip", item=item, seller=second_inventory)
+                                unhovered Hide("tooltip")
+                            if not inventory.grid_view:
+                                vbox:                        
+                                    text "List Value: [value]"
+                                    if not trade_mode and second_inventory:
+                                        text "Sell Value: " + str(calculate_price(item, second_inventory)) + ")"
             ## maintains spacing in empty inventories.
             if len(inventory.inv) == 0:
                 add Null(height = 100, width = 100)
