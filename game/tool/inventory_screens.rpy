@@ -119,7 +119,7 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
                                 idle LiveComposite((100,100), (0,0), icon, (0,0), Text(qty))
                                 hover LiveComposite((100,100), (0,0), hover_icon, (0,0), Text(qty))
                                 action If(second_inventory, If(trade_mode, Function(trade, inventory, second_inventory, item), Function(transaction, inventory, second_inventory, item)), Show("popup", message=description))
-                                hovered Show("tooltip", item = item, seller = second_inventory)
+                                hovered Show("tooltip", item = item, seller = inventory)
                                 unhovered Hide("tooltip")
                                 at things
                             if not inventory.grid_view:
@@ -128,17 +128,17 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
                                     if not trade_mode:
                                         # text "List Value: [value]"
                                         if second_inventory:
-                                            text ("Sell Value: " + str(calculate_price(item, second_inventory)))
+                                            text ("Sell Value: " + str(calculate_price(item, inventory)))
                         else:                               
                             textbutton "[name] ([qty])":
                                 action If(second_inventory, If(trade_mode and second_inventory, Function(trade, inventory, second_inventory, item), Function(transaction, inventory, second_inventory, item)), Show("popup", message=description))
-                                hovered Show("tooltip", item=item, seller=second_inventory)
+                                hovered Show("tooltip", item=item, seller=inventory)
                                 unhovered Hide("tooltip")
                             if not inventory.grid_view:
                                 vbox:                        
                                     text "List Value: [value]"
                                     if not trade_mode and second_inventory:
-                                        text "Sell Value: " + str(calculate_price(item, second_inventory)) + ")"
+                                        text "Sell Value: " + str(calculate_price(item, inventory)) + ")"
             ## maintains spacing in empty inventories.
             if len(inventory.inv) == 0:
                 add Null(height = 100, width = 100)

@@ -22,7 +22,7 @@ init python:
             # type of item
             self.type = type
 
-        def change(self, name, description=False, icon=False, value=False):
+        def change(self, name, description=False, icon=False, value=False) -> None:
             self.name = name
             if description:
                 self.description = description
@@ -30,19 +30,20 @@ init python:
                 self.icon = icon
             if value:
                 self.value = value
+            return
 
     class Inventory(store.object):
         """Inventory of a character"""
         def __init__(self,
-            name,
-            money = 0,
-            barter = 100,
+            name: str,
+            money: int = 0,
+            interest_percentage = 1,
             inv = {}):
 
             self.name = name
             self.money = money
             # percentage of value paid for items
-            self.barter = barter
+            self.interest_percentage = interest_percentage
             # items stored in nested list [item object, qty]
             self.inv = {}
             self.inv.update(inv)
@@ -96,10 +97,10 @@ init python:
             self.deposit(price)
             self.take(item)
 
-    def calculate_price(item, buyer):
+    def calculate_price(item, buyer) -> int:
         """Calculate price"""
         if buyer:
-            price = inventory_items[item].value * (buyer.barter * 0.01)
+            price = inventory_items[item].value + (inventory_items[item].value * (buyer.interest_percentage))
             return int(price)
 
     def money_transfer(depositor, withdrawer, amount):
@@ -118,7 +119,7 @@ init python:
 
     def transaction(seller, buyer, item):
         """Transaction"""
-        price = calculate_price(item, buyer)
+        price = calculate_price(item, seller)
         if buyer.money >= price:
             seller.sell(item, price)
             buyer.buy(item, price)

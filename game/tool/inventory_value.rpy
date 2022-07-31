@@ -21,7 +21,7 @@ define inventory_items = {
 
 ######### DEFINE INVENTORIES ##########    
 define mc_inventory_name = __("MC")
-default mc_inventory = Inventory(name="[mc_inventory_name]", money=500, barter=100,
+default mc_inventory = Inventory(name="[mc_inventory_name]", money=500, interest_percentage=0/100,
     inv = {
         "coin":     4,
         "sword":    1,
@@ -33,7 +33,7 @@ default mc_inventory = Inventory(name="[mc_inventory_name]", money=500, barter=1
 )
 
 define mindy_inventory_name = __("Mindy")
-default mindy_inv = Inventory(name="[mindy_inventory_name]", money=500, barter=75,
+default mindy_inv = Inventory(name="[mindy_inventory_name]", money=500, interest_percentage=20/100,
     inv = {
         "eye":      4,
         "but":      3,
