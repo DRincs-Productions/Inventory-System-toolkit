@@ -1,16 +1,20 @@
 init python: 
     import renpy.store as store
-    
+    from typing import Optional
+    from typing import Literal
+
+    INVENTORY_ITEM_TYPE = type(Literal["Item"])
+
     class InventoryItem(store.object):
         """Inventory item"""
         def __init__(self,
-            name,
-            description,
-            icon,
-            value = None,
-            act = Show("inventory_popup", message="Nothing happened!"),
-            type="item",
-            recipe = None):
+            name: str,
+            description: str,
+            icon: str,
+            value: Optional[int] = None,
+            type: INVENTORY_ITEM_TYPE="item",
+            recipe = None
+        ):
 
             global cookbook
             self.name = name
