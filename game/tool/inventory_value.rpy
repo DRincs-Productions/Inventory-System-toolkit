@@ -14,7 +14,7 @@ define inventory_items = {
     "coin"      :   InventoryItem(__("Coin"), __("An old coin"), "images/coin.webp", 1),
     # An item with a unique action (shows screen with custom message)
     "sword"     :   InventoryItem(__("Awesome Sword"), __("An awesome sword."), "images/sword.webp", 500, Show("popup", message = __("You wave the sword around wildly but nothing happens."))),
-    # An item that can be crafted has a recipe, which is a nested list of [ingredient, qty]
+    # An item that can be crafted has a recipe, which is a nested list of [ingredient, quantity]
     "necklace"  :   InventoryItem(__("Penny Necklace"), __("Super magic."), "images/necklace.webp", 50), #, recipe = [[coin,6],[yarn,1]]),
     "doll"      :   InventoryItem(__("Handmade Doll"), __("Guaranteed to bring luck. (Or not?) Very huggable, mind the needle."), "images/doll.webp", 100000), #, recipe = [[but,2],[fabric,3],[yarn,1]]),
 }
@@ -22,7 +22,7 @@ define inventory_items = {
 ######### DEFINE INVENTORIES ##########    
 define mc_inventory_name = __("MC")
 default mc_inventory = Inventory(name="[mc_inventory_name]", money=500, interest_percentage=0/100,
-    inv = {
+    inventoryItems = {
         "coin":     4,
         "sword":    1,
         "eye":      1,
@@ -34,7 +34,7 @@ default mc_inventory = Inventory(name="[mc_inventory_name]", money=500, interest
 
 define mindy_inventory_name = __("Mindy")
 default mindy_inv = Inventory(name="[mindy_inventory_name]", money=500, interest_percentage=20/100,
-    inv = {
+    inventoryItems = {
         "eye":      4,
         "but":      3,
         "coin":     2,

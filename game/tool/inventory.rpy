@@ -1,19 +1,21 @@
-init python: 
+init python:
     import renpy.store as store
     from typing import Optional
     from typing import Literal
 
     INVENTORY_ITEM_TYPE = type(Literal["Item"])
 
+
     class InventoryItem(store.object):
         """Inventory item"""
+
         def __init__(self,
-            name: str,
-            description: str,
-            icon: str,
-            value: Optional[int] = None,
-            type: INVENTORY_ITEM_TYPE="item",
-        ):
+                    name: str,
+                    description: str,
+                    icon: str,
+                    value: Optional[float] = None,
+                    type: INVENTORY_ITEM_TYPE = "item",
+                    ):
 
             self.name = name
             self.description = description
@@ -22,114 +24,121 @@ init python:
             # type of item
             self.type = type
 
-        def change(self, name, description=False, icon=False, value=False) -> None:
-            self.name = name
-            if description:
-                self.description = description
-            if icon:
-                self.icon = icon
-            if value:
-                self.value = value
-            return
 
     class Inventory(store.object):
         """Inventory of a character"""
+
         def __init__(self,
-            name: str,
-            money: int = 0,
-            interest_percentage = 1,
-            inv = {}):
+                    name: str,
+                    money: int = 0,
+                    interest_percentage: float = 1,
+                    inventoryItems: Optional[dict[str, int]] = None,
+                    ):
 
             self.name = name
             self.money = money
             # percentage of value paid for items
             self.interest_percentage = interest_percentage
-            # items stored in nested list [item object, qty]
-            self.inv = {}
-            self.inv.update(inv)
+            # items stored in nested list [item object, quantity]
+            self.memory = {}
+            self.memory.update(inventoryItems if inventoryItems else {})
 
             self.sort_order = True
             self.grid_view = True
 
-        def set(self, text, value):
+        def set(self, text: str, value: int) -> None:
             """Function to set or add a new value"""
             if (text != None and text != ""):
-                self.inv[text] = value
+                self.memory[text] = value
             else:
                 self.remove(text)
-        def remove(self, text):
+            return
+
+        def remove(self, text: str) -> None:
             """Delete the text value"""
-            del self.inv[text]
-        def change(self, text, amt, max=100, min=0):
+            del self.memory[text]
+            return
+
+        def change(self, text: str, amt: int, max: int = 100, min: int = 0) -> None:
             """Changes a value, if it does not exist adds it"""
-            if (self.get(text) != None):
-                self.inv[text] += amt
-                if (self.get(text) == 0):
+            if (self.getQuantity(text) != None):
+                self.memory[text] += amt
+                if (self.getQuantity(text) == 0):
                     self.remove(text)
             else:
                 self.set(text, amt)
-        def get(self, text):
+            return
+
+        def getQuantity(self, text: str) -> Optional[int]:
             """Returns the value "text", in case it does not exist returns None"""
-            if text in self.inv:
-                return self.inv[text]
+            if text in self.memory:
+                return self.memory[text]
             else:
                 return None
 
-        def take(self, item, qty=1):
+        def getValues(self) -> dict[str, int]:
+            return self.memory
+
+        def addItem(self, item_id, amt=1, max: int = 100, min: int = 0):
             """++++++"""
-            self.change(item, qty)
-        def drop(self, item, qty=1):
+            self.change(item_id, amt, max, min)
+
+        def dropItem(self, item_id, amt=1, max: int = 100, min: int = 0):
             """------"""
-            self.change(item, -qty)
-        def qty(self, item):
-            """Returns quantity"""
-            return self.get(item)
+            self.change(item_id, -amt, max, min)
 
-        def deposit(self, amount):
-            self.money -= amount
-        def withdraw(self, amount):
-            self.money += amount
+        def depositMoney(self, amt):
+            self.money -= amt
 
-        def sell(self, item, price):
-            self.withdraw(price)
-            self.drop(item)
-        def buy(self, item, price):
-            self.deposit(price)
-            self.take(item)
+        def withdrawMoney(self, amt):
+            self.money += amt
 
-    def calculate_price(item, buyer) -> int:
-        """Calculate price"""
-        if buyer:
-            price = inventory_items[item].value + (inventory_items[item].value * (buyer.interest_percentage))
-            return int(price)
+        def sell(self, item_id, price):
+            self.withdrawMoney(price)
+            self.dropItem(item_id)
 
-    def money_transfer(depositor, withdrawer, amount):
+        def buy(self, item_id, price):
+            self.depositMoney(price)
+            self.addItem(item_id)
+
+        def calculatePrice(self, item_id) -> float:
+            """Calculate price"""
+            price = inventory_items[item_id].value + \
+                (inventory_items[item_id].value * (self.interest_percentage))
+            return float(price)
+
+
+    def moneyTransfer(depositor, withdrawer, amount):
         """Money transfer"""
         if depositor.money >= amount:
-            depositor.deposit(amount)
-            withdrawer.withdraw(amount) 
+            depositor.depositMoney(amount)
+            withdrawer.withdrawMoney(amount)
         else:
             message = _("Sorry, %s doesn't have %d!") % (buyer.name, amount)
-            renpy.show_screen("popup", message=message) 
+            renpy.show_screen("popup", message=message)
 
-    def trade(seller, buyer, item):
+
+    def trade(seller, buyer, item_id):
         """Trade"""
-        seller.drop(item)
-        buyer.take(item)
+        seller.dropItem(item_id)
+        buyer.addItem(item_id)
 
-    def transaction(seller, buyer, item):
+
+    def transaction(seller, buyer, item_id):
         """Transaction"""
-        price = calculate_price(item, seller)
+        price = seller.calculatePrice(item_id)
         if buyer.money >= price:
-            seller.sell(item, price)
-            buyer.buy(item, price)
+            seller.sell(item_id, price)
+            buyer.buy(item_id, price)
         else:
             message = _("Sorry, %s doesn't have enough money!") % (buyer.name)
-            renpy.show_screen("popup", message = message)
+            renpy.show_screen("popup", message=message)
+
 
     def getItemNumberInInventory(inventory1, inventory2) -> int:
         return getItemNumberInInventory(inventory1 | inventory2)
 
+
     def getItemNumberInInventory(inventory) -> int:
         """Returns the number of items in the inventory"""
-        return len(inventory.inv)
+        return len(inventory.getValues())
