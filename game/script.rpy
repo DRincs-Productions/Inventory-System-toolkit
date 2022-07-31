@@ -17,7 +17,8 @@ screen room_navigation():
         yalign 0.0 xalign 0.0
         hbox:
             textbutton "Inventory" action Show("inventory_screen", first_inventory=mc_inventory)
-            textbutton "Vendor" action Show("inventory_screen", first_inventory=mc_inventory, second_inventory=mindy_inv)
+            textbutton "Buy" action Show("inventory_screen", first_inventory=mc_inventory, second_inventory=mindy_inv)
+            textbutton "Sel and Buy" action Show("inventory_screen", first_inventory=mc_inventory, second_inventory=mindy_inv, sell_and_buy=True)
             textbutton "Trade" action Show("inventory_screen", first_inventory=mc_inventory, second_inventory=mindy_inv, trade_mode=True)
             textbutton "Storage/Bank" action Show("inventory_screen", first_inventory=mc_inventory, second_inventory=chest, trade_mode=True, bank_mode=True) 
             textbutton "Exit" action Quit(confirm=False)

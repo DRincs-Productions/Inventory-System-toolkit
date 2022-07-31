@@ -42,7 +42,7 @@ screen tooltip(item = False, seller = False):
             $ del val_name
             $ del val_description
 
-screen inventory_screen(first_inventory, second_inventory=None, trade_mode=False, bank_mode=False):
+screen inventory_screen(first_inventory, second_inventory=None, trade_mode=False, bank_mode=False, sell_and_buy = False):
     # add '/gui/overlay/game_menu.png'
     style_prefix 'inventory'
     tag menu
@@ -68,12 +68,13 @@ screen inventory_screen(first_inventory, second_inventory=None, trade_mode=False
         style_group "invstyle"
         hbox:
             spacing 25
-            vbox:
-                label first_inventory.name
-                if second_inventory:
-                    use money(first_inventory, second_inventory, bank_mode)
-                use inventory_view(first_inventory, second_inventory, trade_mode)
-                use view_nav(first_inventory)
+            if (second_inventory and sell_and_buy) or not second_inventory or trade_mode:
+                vbox:
+                    label first_inventory.name
+                    if second_inventory:
+                        use money(first_inventory, second_inventory, bank_mode)
+                    use inventory_view(first_inventory, second_inventory, trade_mode)
+                    use view_nav(first_inventory)
             if second_inventory:
                 vbox:
                     label second_inventory.name
