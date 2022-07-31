@@ -42,7 +42,7 @@ screen tooltip(item = False, seller = False):
             $ del val_name
             $ del val_description
 
-screen inventory_screen(first_inventory, second_inventory=False, trade_mode=False, bank_mode=False):
+screen inventory_screen(first_inventory, second_inventory=None, trade_mode=False, bank_mode=False):
     # add '/gui/overlay/game_menu.png'
     style_prefix 'inventory'
     tag menu
