@@ -18,3 +18,29 @@ define inventory_items = {
     # "necklace"  :   Item("Penny Necklace", "Super magic.", "images/necklace.webp", 50, recipe = [[coin,6],[yarn,1]]),
     # "doll"      :   Item("Handmade Doll", "Guaranteed to bring luck. (Or not?) Very huggable, mind the needle.", "images/doll.webp", 100000, recipe = [[but,2],[fabric,3],[yarn,1]]),
 }
+
+######### DEFINE INVENTORIES ##########    
+define mc_inventory_name = __("MC Inventory")
+default mc_inventory = Inventory(name="[mc_inventory_name]", money=500, barter=100,
+    inv = {
+        "coin":     4,
+        "sword":    1,
+        "eye":      1,
+        "but":      2,
+        "fabric":   3,
+        "yarn":     2,
+    }
+)
+
+define mindy_inventory_name = __("Mindy")
+default mindy_inv = Inventory(name="[mindy_inventory_name]", money=500, barter=75,
+    inv = {
+        "eye":      4,
+        "but":      3,
+        "coin":     2,
+    }
+)
+
+define chest_inventory_name = __("Storage Chest")
+default chest = Inventory(name="[chest_inventory_name]")
+    
