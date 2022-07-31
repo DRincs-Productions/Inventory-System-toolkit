@@ -118,7 +118,7 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
                             imagebutton:
                                 idle LiveComposite((100,100), (0,0), icon, (0,0), Text(qty))
                                 hover LiveComposite((100,100), (0,0), hover_icon, (0,0), Text(qty))
-                                action (If(not second_inventory, inventory_items[item].act, (If(trade_mode, Function(trade, inventory, second_inventory, item), Function(transaction, inventory, second_inventory, item)))))
+                                action If(second_inventory, If(trade_mode, Function(trade, inventory, second_inventory, item), Function(transaction, inventory, second_inventory, item)), Show("popup", message=description))
                                 hovered Show("tooltip", item = item, seller = second_inventory)
                                 unhovered Hide("tooltip")
                                 at things
@@ -131,7 +131,7 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
                                             text ("Sell Value: " + str(calculate_price(item, second_inventory)))
                         else:                               
                             textbutton "[name] ([qty])":
-                                action (If(not second_inventory, inventory_items[item].act,(If(trade_mode, Function(trade, inventory, second_inventory, item), Function(transaction, inventory, second_inventory, item)))))
+                                action If(second_inventory, If(trade_mode and second_inventory, Function(trade, inventory, second_inventory, item), Function(transaction, inventory, second_inventory, item)), Show("popup", message=description))
                                 hovered Show("tooltip", item=item, seller=second_inventory)
                                 unhovered Hide("tooltip")
                             if not inventory.grid_view:
@@ -171,42 +171,6 @@ screen banking(depositor, withdrawer):
                 textbutton "Transfer" action [Function(money_transfer, depositor, withdrawer, transfer_amount), SetVariable("transfer_amount", 0), Hide("banking")]
                 textbutton "Cancel" action Hide("banking")
 
-screen crafting(inventory):
-    vbox:
-        label "Recipes"
-        hbox:
-            xmaximum 600 xminimum 600 xfill True
-            text "Name" xalign 0.5
-            text "Ingredients" xalign 0.5
-        side "c r":
-            area (0,0,600,400)
-            viewport id "cookbook":
-                draggable True
-                mousewheel True
-                vbox:
-                    for item in cookbook:
-                        hbox:
-                            first_spacing 25 spacing 10
-                            hbox:
-                                xmaximum 250 xminimum 250 xfill True box_wrap True
-                                if item.icon:
-                                    add im.FactorScale(item.icon, 0.33)
-                                if inventory.check_recipe(item):
-                                    textbutton item.name action Function(inventory.craft,item)
-                                else:
-                                    text item.name
-                            for i in item.recipe: 
-                                if i[0].icon:
-                                    add im.FactorScale(i[0].icon, 0.33)
-                                else:
-                                    text i[0].name
-                                if inventory.qty(i[0]) >= i[1]:
-                                    text "x" + str(i[1]) bold True
-                                else:
-                                    text "x" + str(i[1])
-            vbar value YScrollValue("cookbook") 
-        textbutton "Hide" action ToggleScreenVariable("crafting_screen") xalign 0.5
-
 screen view_nav(inventory):
     hbox:
         text "View: "
@@ -223,11 +187,3 @@ screen sort_nav(inventory):
             textbutton "asc." action [ToggleField(inventory, "sort_order"), inventory.sort_by]
         else:
             textbutton "des." action [ToggleField(inventory, "sort_order"), inventory.sort_by]
-
-screen inventory_popup(message):
-    zorder 100
-    frame:
-        style_group "invstyle"
-        hbox:
-            text message
-    timer 1.5 action Hide("inventory_popup")

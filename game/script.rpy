@@ -7,8 +7,6 @@
 # The game starts here.
 
 label start:
-    ## If using the crafting feature, add an empty cookbook list after start to keep track of recipes
-    $ cookbook = list() 
 
     call screen room_navigation
 
