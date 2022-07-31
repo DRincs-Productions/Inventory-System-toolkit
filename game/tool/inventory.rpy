@@ -7,7 +7,7 @@ init python:
 
 
     class InventoryItem(store.object):
-        """Inventory item"""
+        """Wiki: https://github.com/DRincs-Productions/Inventory-System-toolkit/wiki/Inventory-Items """
 
         def __init__(self,
                     name: str,
@@ -26,7 +26,7 @@ init python:
 
 
     class Inventory(store.object):
-        """Inventory of a character"""
+        """Wiki: https://github.com/DRincs-Productions/Inventory-System-toolkit/wiki/Inventory """
 
         def __init__(self,
                     name: str,
@@ -80,17 +80,19 @@ init python:
             return self.memory
 
         def addItem(self, item_id, amt=1, max: int = 100, min: int = 0):
-            """++++++"""
+            """Wiki: https://github.com/DRincs-Productions/Inventory-System-toolkit/wiki/Inventory#add-an-item-in-inventory """
             self.change(item_id, amt, max, min)
 
         def dropItem(self, item_id, amt=1, max: int = 100, min: int = 0):
-            """------"""
+            """Wiki: https://github.com/DRincs-Productions/Inventory-System-toolkit/wiki/Inventory#remove-an-item-in-inventory """
             self.change(item_id, -amt, max, min)
 
         def depositMoney(self, amt):
+            """Wiki: https://github.com/DRincs-Productions/Inventory-System-toolkit/wiki/Inventory#deposit-money """
             self.money -= amt
 
         def withdrawMoney(self, amt):
+            """Wiki: https://github.com/DRincs-Productions/Inventory-System-toolkit/wiki/Inventory#withdraw-money """
             self.money += amt
 
         def sell(self, item_id, price):
