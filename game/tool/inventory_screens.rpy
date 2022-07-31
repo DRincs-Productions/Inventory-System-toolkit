@@ -1,3 +1,5 @@
+define INVENTORY_COLUMN_NUMBER = 6
+
 init:
     transform close_zoom:
         size ((105, 35) if renpy.variant("small") else (75, 25))
@@ -84,15 +86,12 @@ screen inventory_screen(first_inventory, second_inventory=False, trade_mode=Fals
                     # use sort_nav(second_inventory)
 
 screen inventory_view(inventory, second_inventory=False, trade_mode=False):
-    $ column_number = 6
     # Necessary otherwise cause: Grid not completely full. (in renpy the grid not is smart)
     $ max_item_number = getItemNumberInInventory(inventory)
     $ grid_column_number = max_item_number
-    if (max_item_number % column_number > 0):
-        $ grid_column_number = max_item_number + (column_number - (max_item_number % column_number))
+    if (max_item_number % INVENTORY_COLUMN_NUMBER > 0):
+        $ grid_column_number = max_item_number + (INVENTORY_COLUMN_NUMBER - (max_item_number % INVENTORY_COLUMN_NUMBER))
     $ list_item_key = list(inventory.inv.keys())
-
-
     side "c r":
         style_group "invstyle"
         area (0, 0, 700, 500)
@@ -101,8 +100,10 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
             mousewheel True
             xsize 700
             ysize 500
-            if inventory.grid_view:
-                cols column_number
+            if (grid_column_number == 0):
+                cols 1
+            elif inventory.grid_view:
+                cols INVENTORY_COLUMN_NUMBER
                 spacing 10
             else:
                 cols 1
