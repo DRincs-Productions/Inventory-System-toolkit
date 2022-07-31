@@ -1,7 +1,7 @@
 init python: 
     import renpy.store as store
     
-    class Item(store.object):
+    class InventoryItem(store.object):
         """Inventory item"""
         def __init__(self,
             name,
