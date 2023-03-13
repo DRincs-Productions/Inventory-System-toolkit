@@ -7,20 +7,23 @@ screen tooltip(item = False, seller = False):
             $ val_name = inventory_items[item].name
             $ val_description = inventory_items[item].description
             if seller:
-                text ("[val_name]: [val_description] (Sell Value: " + str(seller.calculatePrice(item, inventory_items)) + ")")
+                text ("[val_name]: [val_description] (Sell Value: " + str(seller.calculatePrice(item, inventory_items)) + ")"):
+                    size gui.normal_text_size
             else:
-                text "[val_name]: [val_description]"
+                text "[val_name]: [val_description]":
+                    size gui.normal_text_size
             $ del val_name
             $ del val_description
 
 screen inventory_screen(first_inventory, second_inventory=None, trade_mode=False, bank_mode=False, sell_and_buy = False):
     # add '/gui/overlay/game_menu.png'
-    style_prefix 'inventory'
     tag menu
     frame:
         area (150, 95, 350, 50)
         background None
-        text _("THE STUFF") color gui.accent_color size 28 #font 'hermes.ttf'
+        text _("{b}THE STUFF{/b}"):
+            color gui.accent_color
+            size gui.name_text_size
 
     # button for closure
     imagebutton:
@@ -96,11 +99,12 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
                                 at things
                             if not inventory.grid_view:
                                 vbox:
-                                    text name
+                                    text name:
+                                        size gui.normal_text_size
                                     if not trade_mode:
-                                        # text "List Value: [value]"
                                         if second_inventory:
-                                            text ("Sell Value: " + str(inventory.calculatePrice(item, inventory_items)))
+                                            text ("Sell Value: " + str(inventory.calculatePrice(item, inventory_items))):
+                                                size gui.normal_text_size
                         else:                               
                             textbutton "[name] ([quantity])":
                                 action If(second_inventory, If(trade_mode and second_inventory, Function(trade, inventory, second_inventory, item), Function(transaction, inventory, second_inventory, item)), Show("popup", message=description))
@@ -108,9 +112,11 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
                                 unhovered Hide("tooltip")
                             if not inventory.grid_view:
                                 vbox:                        
-                                    text "List Value: [value]"
+                                    text "List Value: [value]":
+                                        size gui.normal_text_size
                                     if not trade_mode and second_inventory:
-                                        text "Sell Value: " + str(inventory.calculatePrice(item, inventory_items)) + ")"
+                                        text "Sell Value: " + str(inventory.calculatePrice(item, inventory_items)) + ")":
+                                            size gui.normal_text_size
             ## maintains spacing in empty inventories.
             if getItemNumberInInventory(inventory) == 0:
                 add Null(height = 100, width = 100)
@@ -131,7 +137,8 @@ screen banking(depositor, withdrawer):
         align (0.5, 0.5)
         vbox:
             label "Money Transfer"
-            text "Amount: [transfer_amount]"
+            text "Amount: [transfer_amount]":
+                size gui.normal_text_size
             bar value VariableValue("transfer_amount", int(depositor.money), max_is_zero=False, style='scrollbar', offset=0, step=0.1) xmaximum 200
 
             # Examples of the types of controls you can set up
@@ -145,9 +152,12 @@ screen banking(depositor, withdrawer):
 
 screen view_nav(inventory):
     hbox:
+        align (0.02, 0.5)
         text "View: "
-        textbutton "Grid" action SetField(inventory, "grid_view", True)
-        textbutton "List" action SetField(inventory, "grid_view", False)
+        textbutton "Grid" :
+            action SetField(inventory, "grid_view", True)
+        textbutton "List":
+            action SetField(inventory, "grid_view", False)
 
 screen sort_nav(inventory):
     hbox:
