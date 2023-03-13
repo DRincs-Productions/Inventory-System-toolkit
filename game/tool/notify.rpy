@@ -1,46 +1,33 @@
-init python:
-    class NotifyEx(renpy.python.RevertableObject):
-        """Notifications, to use: default ... = NotifyEx(msg="...", img="...")"""
-        def __init__(self,
-                    msg: str,
-                    img: str
-                    ):
-            super(NotifyEx, self).__init__()
-            self.msg = msg
-            self.img = img
-            self.remain = gui.notifyEx_delay
 
-
-    def notifyEx(msg: str = None, img: str = None):
-        notifications.append(NotifyEx(msg, img))
-        if len(store.notifications) == 1:
-            renpy.show_screen("notifyEx")
-
-
-    def notifyExClean(value):
-        if value in store.notifications:
-            store.notifications.remove(value)
-        if len(store.notifications) == 0:
-            renpy.hide_screen("notifyEx")
-
-
-    def notify(notific):
-        """View defined notifications.
-        to use: $ notify(...)"""
-        notifications.append(NotifyEx(notific.msg, notific.img))
-        if len(store.notifications) == 1:
-            renpy.show_screen("notifyEx")
-
-# Delay of visibility of a notification.
-define gui.notifyEx_delay = 10.0
 # Width of the images.
-define gui.notifyEx_width = 64
+define gui.notifyEx_width = gui.label_text_size
 # Height of the images.
-define gui.notifyEx_height = 64
+define gui.notifyEx_height = gui.label_text_size
 
 define gui.notifyEx_color = "#000000"
+define gui.notifyEx_text_color = "#ffffff"
 
-default notifications = []
+label enable_notifyEx:
+    show screen notifyEx
+    return
+label disable_notifyEx:
+    hide notifyEx
+    return
+
+init -999 python:
+    import pythonpackages.renpy_custom_notify as myNotify
+
+    def notifyEx(msg: str = None, img: str = None):
+        return myNotify.notifyEx(msg, img)
+
+    def notifyExPreventsLoops(msg: str = None, img: str = None):
+        return myNotify.notifyExPreventsLoops(msg, img)
+
+    def notifyExClean(value):
+        return myNotify.notifyExClean(value)
+
+    def notify(notific):
+        return myNotify.notify(notific)
 
 style notify_text is default:
     color gui.notifyEx_color
@@ -77,6 +64,6 @@ screen notifyExInternal( n ):
             null width 5
 
             if not n.msg is None:
-                text n.msg
+                text n.msg color gui.notifyEx_text_color
 
     timer 0.05 repeat True action [ SetField( n, "remain", n.remain - 0.05 ), If( n.remain <= 0, Function( notifyExClean, n ), NullAction() ) ]
