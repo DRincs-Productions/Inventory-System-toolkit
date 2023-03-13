@@ -1,33 +1,4 @@
-define INVENTORY_COLUMN_NUMBER = 6
-
-init:
-    transform close_zoom:
-        size ((105, 35) if renpy.variant("small") else (75, 25))
-        xanchor (35 if renpy.variant("small") else 25)
-
-    transform things:
-        on selected_idle:
-            # matrixcolor SaturationMatrix(0.0)
-            zoom 0.9
-        on idle:
-            # matrixcolor SaturationMatrix(0.0)
-            zoom 0.9
-        on hover:
-            matrixcolor SaturationMatrix(1.0)
-            zoom 1.0
-        on selected_hover:
-            matrixcolor SaturationMatrix(1.0)
-            zoom 1.0
-
-style invstyle_frame:
-    xalign 0.5
-    yalign 0.5
-    
-style invstyle_label_text:
-    size 30
-    
-style invstyle_label:
-    xalign 0.5
+define gui.inventory_column_number = 6
 
 screen tooltip(item = False, seller = False):
     if item:
@@ -36,20 +7,23 @@ screen tooltip(item = False, seller = False):
             $ val_name = inventory_items[item].name
             $ val_description = inventory_items[item].description
             if seller:
-                text ("[val_name]: [val_description] (Sell Value: " + str(seller.calculatePrice(item)) + ")")
+                text ("[val_name]: [val_description] (Sell Value: " + str(seller.calculatePrice(item, inventory_items)) + ")"):
+                    size gui.normal_text_size
             else:
-                text "[val_name]: [val_description]"
+                text "[val_name]: [val_description]":
+                    size gui.normal_text_size
             $ del val_name
             $ del val_description
 
 screen inventory_screen(first_inventory, second_inventory=None, trade_mode=False, bank_mode=False, sell_and_buy = False):
     # add '/gui/overlay/game_menu.png'
-    style_prefix 'inventory'
     tag menu
     frame:
         area (150, 95, 350, 50)
         background None
-        text _("THE STUFF") color gui.accent_color size 28 #font 'hermes.ttf'
+        text _("{b}THE STUFF{/b}"):
+            color gui.accent_color
+            size gui.name_text_size
 
     # button for closure
     imagebutton:
@@ -65,7 +39,7 @@ screen inventory_screen(first_inventory, second_inventory=None, trade_mode=False
 
     # modal False
     frame:
-        style_group "invstyle"
+        align (0.5, 0.5)
         hbox:
             spacing 25
             if (second_inventory and sell_and_buy) or not second_inventory or trade_mode:
@@ -86,11 +60,11 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
     # Necessary otherwise cause: Grid not completely full. (in renpy the grid not is smart)
     $ max_item_number = getItemNumberInInventory(inventory)
     $ grid_column_number = max_item_number
-    if (max_item_number % INVENTORY_COLUMN_NUMBER > 0):
-        $ grid_column_number = max_item_number + (INVENTORY_COLUMN_NUMBER - (max_item_number % INVENTORY_COLUMN_NUMBER))
+    if (max_item_number % gui.inventory_column_number > 0):
+        $ grid_column_number = max_item_number + (gui.inventory_column_number - (max_item_number % gui.inventory_column_number))
     $ list_item_key = list(inventory.getValues().keys())
     side "c r":
-        style_group "invstyle"
+        align (0.5, 0.5)
         area (0, 0, 700, 500)
         vpgrid id ("vp"+inventory.name):
             draggable True   
@@ -100,7 +74,7 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
             if (grid_column_number == 0):
                 cols 1
             elif inventory.grid_view:
-                cols INVENTORY_COLUMN_NUMBER
+                cols gui.inventory_column_number
                 spacing 10
             else:
                 cols 1
@@ -125,11 +99,12 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
                                 at things
                             if not inventory.grid_view:
                                 vbox:
-                                    text name
+                                    text name:
+                                        size gui.normal_text_size
                                     if not trade_mode:
-                                        # text "List Value: [value]"
                                         if second_inventory:
-                                            text ("Sell Value: " + str(inventory.calculatePrice(item)))
+                                            text ("Sell Value: " + str(inventory.calculatePrice(item, inventory_items))):
+                                                size gui.normal_text_size
                         else:                               
                             textbutton "[name] ([quantity])":
                                 action If(second_inventory, If(trade_mode and second_inventory, Function(trade, inventory, second_inventory, item), Function(transaction, inventory, second_inventory, item)), Show("popup", message=description))
@@ -137,9 +112,11 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
                                 unhovered Hide("tooltip")
                             if not inventory.grid_view:
                                 vbox:                        
-                                    text "List Value: [value]"
+                                    text "List Value: [value]":
+                                        size gui.normal_text_size
                                     if not trade_mode and second_inventory:
-                                        text "Sell Value: " + str(inventory.calculatePrice(item)) + ")"
+                                        text "Sell Value: " + str(inventory.calculatePrice(item, inventory_items)) + ")":
+                                            size gui.normal_text_size
             ## maintains spacing in empty inventories.
             if getItemNumberInInventory(inventory) == 0:
                 add Null(height = 100, width = 100)
@@ -148,7 +125,7 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
 
 screen money(inventory, second_inventory, bank_mode=False):
     hbox:
-        style_group "invstyle"
+        align (0.5, 0.5)
         text "Money: [inventory.money]"
         if bank_mode and inventory.money:
             textbutton "Transfer" action Show("banking", depositor=inventory, withdrawer=second_inventory)
@@ -157,10 +134,11 @@ define transfer_amount = 0
 screen banking(depositor, withdrawer):
     modal True
     frame:
-        style_group "invstyle"
+        align (0.5, 0.5)
         vbox:
             label "Money Transfer"
-            text "Amount: [transfer_amount]"
+            text "Amount: [transfer_amount]":
+                size gui.normal_text_size
             bar value VariableValue("transfer_amount", int(depositor.money), max_is_zero=False, style='scrollbar', offset=0, step=0.1) xmaximum 200
 
             # Examples of the types of controls you can set up
@@ -174,9 +152,12 @@ screen banking(depositor, withdrawer):
 
 screen view_nav(inventory):
     hbox:
+        align (0.02, 0.5)
         text "View: "
-        textbutton "Grid" action SetField(inventory, "grid_view", True)
-        textbutton "List" action SetField(inventory, "grid_view", False)
+        textbutton "Grid" :
+            action SetField(inventory, "grid_view", True)
+        textbutton "List":
+            action SetField(inventory, "grid_view", False)
 
 screen sort_nav(inventory):
     hbox:
