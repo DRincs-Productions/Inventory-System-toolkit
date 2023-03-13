@@ -36,7 +36,7 @@ screen tooltip(item = False, seller = False):
             $ val_name = inventory_items[item].name
             $ val_description = inventory_items[item].description
             if seller:
-                text ("[val_name]: [val_description] (Sell Value: " + str(seller.calculatePrice(item)) + ")")
+                text ("[val_name]: [val_description] (Sell Value: " + str(seller.calculatePrice(item, inventory_items)) + ")")
             else:
                 text "[val_name]: [val_description]"
             $ del val_name
@@ -129,7 +129,7 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
                                     if not trade_mode:
                                         # text "List Value: [value]"
                                         if second_inventory:
-                                            text ("Sell Value: " + str(inventory.calculatePrice(item)))
+                                            text ("Sell Value: " + str(inventory.calculatePrice(item, inventory_items)))
                         else:                               
                             textbutton "[name] ([quantity])":
                                 action If(second_inventory, If(trade_mode and second_inventory, Function(trade, inventory, second_inventory, item), Function(transaction, inventory, second_inventory, item)), Show("popup", message=description))
@@ -139,7 +139,7 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
                                 vbox:                        
                                     text "List Value: [value]"
                                     if not trade_mode and second_inventory:
-                                        text "Sell Value: " + str(inventory.calculatePrice(item)) + ")"
+                                        text "Sell Value: " + str(inventory.calculatePrice(item, inventory_items)) + ")"
             ## maintains spacing in empty inventories.
             if getItemNumberInInventory(inventory) == 0:
                 add Null(height = 100, width = 100)

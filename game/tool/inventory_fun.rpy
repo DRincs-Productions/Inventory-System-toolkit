@@ -17,7 +17,7 @@ init python:
 
     def transaction(seller, buyer, item_id):
         """Transaction"""
-        price = seller.calculatePrice(item_id)
+        price = seller.calculatePrice(item_id, inventory_items)
         if buyer.money >= price:
             seller.sell(item_id, price)
             buyer.buy(item_id, price)
