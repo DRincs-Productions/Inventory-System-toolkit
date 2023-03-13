@@ -1,33 +1,4 @@
-define INVENTORY_COLUMN_NUMBER = 6
-
-init:
-    transform close_zoom:
-        size ((105, 35) if renpy.variant("small") else (75, 25))
-        xanchor (35 if renpy.variant("small") else 25)
-
-    transform things:
-        on selected_idle:
-            # matrixcolor SaturationMatrix(0.0)
-            zoom 0.9
-        on idle:
-            # matrixcolor SaturationMatrix(0.0)
-            zoom 0.9
-        on hover:
-            matrixcolor SaturationMatrix(1.0)
-            zoom 1.0
-        on selected_hover:
-            matrixcolor SaturationMatrix(1.0)
-            zoom 1.0
-
-style invstyle_frame:
-    xalign 0.5
-    yalign 0.5
-    
-style invstyle_label_text:
-    size 30
-    
-style invstyle_label:
-    xalign 0.5
+define gui.inventory_column_number = 6
 
 screen tooltip(item = False, seller = False):
     if item:
@@ -86,8 +57,8 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
     # Necessary otherwise cause: Grid not completely full. (in renpy the grid not is smart)
     $ max_item_number = getItemNumberInInventory(inventory)
     $ grid_column_number = max_item_number
-    if (max_item_number % INVENTORY_COLUMN_NUMBER > 0):
-        $ grid_column_number = max_item_number + (INVENTORY_COLUMN_NUMBER - (max_item_number % INVENTORY_COLUMN_NUMBER))
+    if (max_item_number % gui.inventory_column_number > 0):
+        $ grid_column_number = max_item_number + (gui.inventory_column_number - (max_item_number % gui.inventory_column_number))
     $ list_item_key = list(inventory.getValues().keys())
     side "c r":
         style_group "invstyle"
@@ -100,7 +71,7 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
             if (grid_column_number == 0):
                 cols 1
             elif inventory.grid_view:
-                cols INVENTORY_COLUMN_NUMBER
+                cols gui.inventory_column_number
                 spacing 10
             else:
                 cols 1
