@@ -2,6 +2,12 @@ import renpy.store as store
 from typing import Optional
 from typing import Literal
 
+__all__ = [
+    "InventoryItem",
+    "Inventory",
+    "INVENTORY_ITEM_TYPE",
+]
+
 INVENTORY_ITEM_TYPE = type(Literal["Item"])
 
 

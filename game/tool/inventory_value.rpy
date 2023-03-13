@@ -1,4 +1,7 @@
-######### DEFINE ITEM OBJECTS ##########
+init python:
+    from pythonpackages.inventorysystem.inventory import InventoryItem
+    from pythonpackages.inventorysystem.inventory import Inventory
+
 ### The format is name, description, icon image (if applicable), value (if applicable, selling/buying value), action (screen language action to be performed when icon is clicked on inventory screen), and recipe (if craftable).
 
 ### Items without icons are created like this:      
