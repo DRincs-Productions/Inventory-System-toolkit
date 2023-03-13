@@ -36,7 +36,7 @@ screen inventory_screen(first_inventory, second_inventory=None, trade_mode=False
 
     # modal False
     frame:
-        style_group "invstyle"
+        align (0.5, 0.5)
         hbox:
             spacing 25
             if (second_inventory and sell_and_buy) or not second_inventory or trade_mode:
@@ -61,7 +61,7 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
         $ grid_column_number = max_item_number + (gui.inventory_column_number - (max_item_number % gui.inventory_column_number))
     $ list_item_key = list(inventory.getValues().keys())
     side "c r":
-        style_group "invstyle"
+        align (0.5, 0.5)
         area (0, 0, 700, 500)
         vpgrid id ("vp"+inventory.name):
             draggable True   
@@ -119,7 +119,7 @@ screen inventory_view(inventory, second_inventory=False, trade_mode=False):
 
 screen money(inventory, second_inventory, bank_mode=False):
     hbox:
-        style_group "invstyle"
+        align (0.5, 0.5)
         text "Money: [inventory.money]"
         if bank_mode and inventory.money:
             textbutton "Transfer" action Show("banking", depositor=inventory, withdrawer=second_inventory)
@@ -128,7 +128,7 @@ define transfer_amount = 0
 screen banking(depositor, withdrawer):
     modal True
     frame:
-        style_group "invstyle"
+        align (0.5, 0.5)
         vbox:
             label "Money Transfer"
             text "Amount: [transfer_amount]"
