@@ -16,8 +16,16 @@ screen tooltip(item = False, seller = False):
             $ del val_description
 
 screen inventory_screen(first_inventory, second_inventory=None, trade_mode=False, bank_mode=False, sell_and_buy = False):
+    
     # add '/gui/overlay/game_menu.png'
     tag menu
+
+    ## Avoid predicting this screen, as it can be very large.
+    predict False
+
+    modal True
+    # style_prefix "game_menu"
+
     frame:
         area (150, 95, 350, 50)
         background None
